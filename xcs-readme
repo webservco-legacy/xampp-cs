@@ -1,0 +1,62 @@
+XAMPP CS
+Version 1.0.061001
+
+License
+-------
+Proudly released under the GNU GPL.
+See the file xcs-license
+
+Author
+-------
+Radu Maier (oimoroiATgmailDOTcom)
+
+Description
+-----------
+A simple bash script for controlling XAMPP for Linux
+
+Archive contents
+----------------
+xcs         (the program)
+xcs-readme  (this file)
+xcs-license (GNU General Public License)
+
+Installation
+------------
+You should already have a personal bin directory for programs you use.
+If not, I encourage you to create one as a subdirectory of your home directory
+To do this tpye:
+    mkdir ~/bin
+
+To install xamppcs type:
+
+    tar xvfz xamppcs-1.0.061001.tar.gz -C ~/bin/
+
+Using XAMPP CS
+--------------
+Please start xampcs as a normal user.
+At the command prompt type
+    xcs
+to get the menu, or type
+    xcs --help
+for a list of command line options
+
+Changelog
+---------
+1.0.061001 - Sunday 01 October 2006
+    - Initial release
+
+Bugs
+----
+If you find any errors or have any suggestions please do not hesitate to  write me!
+Thank you for using my script!
+
+Acknowledgments
+---------------
+I'd like to thank the Apache Friends team for bringing us XAMPP, 
+and the team from LinuxCommand.org for their great tutorials on the linux shell 
+
+Contact
+-------
+e-mail: oimoroiATgmailDOTcom
+website: http://underbeat.evonet.ro
+

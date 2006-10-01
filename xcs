@@ -1,0 +1,611 @@
+#!/bin/bash
+#
+# XAMPP CS - A simple bash script for controlling XAMPP for Linux
+#
+# Copyright (C) 2006 Radu Maier oimoroiATgmailDOTcom
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public  License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program from the site that you downloaded it
+# from; if not. write to the Free Software Foundation, Inc., 59 Temple
+# Place, Suite 330, Boston, MA 02111-1307 USA
+#
+
+# ================================================================================
+#############
+# VARIABLES #
+#############
+
+# define XAMPP installation directory
+# edit the following line if your XAMPP is installed somewhere else
+SERVERDIR="/opt/lampp/"
+SERVERPATH=$SERVERDIR"lampp"
+
+# ================================================================================
+#############
+# CONSTANTS #
+#############
+
+# program info
+P_FILE=$(basename $0)
+P_NAME="XAMPP CS"
+P_VER="1.0.061001"
+P_DESC="A simple bash script for controlling XAMPP for Linux"
+P_AUTH_N="Radu Maier"
+P_AUTH_E="oimoroiATgmailDOTcom"
+P_AUTH_W="http://underbeat.evonet.ro"
+P_COPY="Copyright (C) 2006 $P_AUTH_N"
+P_FULL_NAME="$P_NAME version $P_VER $P_COPY GNU/GPL Licensed"
+
+# user info
+P_USER=$USER
+P_USER_NOW=$(date +"%Y-%m-%d %H:%M:%S")
+
+# ================================================================================
+#############
+# FUNCTIONS #
+#############
+
+#
+# EXIT AND CONTIUNE FUNCTIONS
+#
+
+function exit_error 
+{
+# display error message and exit
+    echo "$1" 1>&2
+    exit 1
+}
+
+function exit_ok
+{
+# display thank you message and exit gracefully
+    clear
+    echo "--------------------------------------------------------------------------------"
+    echo "                           Thanx for using $P_NAME!                            "
+    echo "--------------------------------------------------------------------------------"
+    exit 0
+}
+
+function su_root
+{
+# switch user to root
+    echo "enter root password!"
+}
+
+function p_header
+{
+# header
+    clear
+    echo "--------------------------------------------------------------------------------"
+    echo " $P_NAME, started by $P_USER on $P_USER_NOW"
+    echo "--------------------------------------------------------------------------------"
+    echo "                                                                                "
+}
+
+function p_header_m
+{
+    echo "--------------------------------------------------------------------------------"
+    echo " $P_FULL_NAME "
+    echo "--------------------------------------------------------------------------------"
+    echo "                                                                                "
+}
+
+function p_logo
+{
+# xampp cs logo
+        echo "        X     X    A    M     M PPPPPP  PPPPPP           CCCCC   SSSSS          "
+        echo "         X   X    A A   MM   MM P     P P     P         C     C S     S         "
+        echo "          X X    A   A  M M M M P     P P     P         C       S               "
+        echo "           X    A     A M  M  M PPPPPP  PPPPPP          C        SSSSS          "
+        echo "          X X   AAAAAAA M     M P       P               C             S         "
+        echo "         X   X  A     A M     M P       P               C     C S     S         "
+        echo "        X     X A     A M     M P       P                CCCCC   SSSSS          "
+}
+
+function p_footer
+{
+# footer
+    echo "                                                                                "
+    echo "--------------------------------------------------------------------------------"
+    echo " done! | Press ENTER to continue                                                "
+    echo "--------------------------------------------------------------------------------"
+    read
+    clear
+}
+
+function invalid_selection
+{
+# invalid selection
+    p_header
+    p_logo
+    echo "                                                                                "
+    echo "--------------------------------------------------------------------------------"
+    echo "                                                                                "
+    echo "                                                                                "
+    echo "                                                                                "
+    echo "                           NOT A VALID SELECTION!                               "
+    echo "                                                                                "
+    echo "                                                                                "
+    echo "                                                                                "
+    echo "                                                                                "
+    echo "--------------------------------------------------------------------------------"
+    echo " error | page 1/1 | Press ENTER to continue                                                "
+    echo "--------------------------------------------------------------------------------"
+    read
+    clear
+}
+
+#
+# EXECUTION CONDITIONS
+#
+
+function check_xampp
+{
+# check if XAMPP is installed
+    if [ ! -e /opt/lampp/lampp ]; then
+        clear
+        p_header_m
+        echo " Dear $USER,"
+        echo "                                                                                "
+        echo " I can't seem to find the XAMPP Server on your system."
+        echo " Either it is not installed, or you have placed it"
+        echo " somwhere other than your /opt directory"
+        echo "                                                                                "
+        echo " If XAMPP is indeed installed on your system,"
+        echo " and it is in a directory other than /opt/lampp "
+        echo " you need to  modify this script to let it know      "
+        echo " where to find XAMPP on your machine."
+        echo "                                                                                "
+        echo " Please open the xcs script with a text editor and modify"
+        echo " line 29 to reflect your XAMPP directory"
+        echo "                                                                                "
+        echo " Best regards,"
+        echo "    $P_AUTH_N"
+        echo "--------------------------------------------------------------------------------"
+        exit_error "$P_NAME : error 01: xampp not installed"
+fi
+}
+
+function check_user
+{
+# make sure you are not logged in as root
+    clear
+    if [ $(id -u) = "0" ]; then
+        p_header
+        echo " Dear $USER,"
+        echo "                                                                                "
+        echo " We, here at $P_NAME HQ, are strongly against"
+        echo " operating the computer as the superuser!"
+        echo "                                                                                "
+        echo " So, please, log out and start $P_NAME as a normal user!"
+        echo "                                                                                "
+        echo " Best regards,"
+        echo "    $P_AUTH_N"
+        echo "--------------------------------------------------------------------------------"
+        exit_error "$P_NAME : error 02: user logged in as root"
+    fi
+    echo "checking user!"
+}
+
+#
+# ACTUAL EXECUTION
+#
+
+function xampp_start
+{
+# start the server
+    p_header
+    echo "Starting the server ..."
+    echo "                                                                                "
+    echo -n "Enter ROOT "
+    su -c "$SERVERPATH start;exit"
+    p_footer
+}
+
+function xampp_stop
+{
+# stop the server
+    p_header
+    echo "Stopping the server ..."
+    echo "                                                                                "
+    echo -n "Enter ROOT "
+    su -c "$SERVERPATH stop;exit"
+    p_footer
+}
+
+function xampp_restart
+{
+# restart server
+    p_header
+    echo "Restarting the server ..."
+    echo "                                                                                "
+    echo -n "Enter ROOT "
+    su -c "$SERVERPATH restart;exit"
+    p_footer
+}
+
+function xampp_check
+{
+# check server status
+    p_header
+    echo "Checking server status ..."
+    echo "                                                                                "
+    echo -n "Enter ROOT "
+    su -c "$SERVERPATH status;exit"
+    p_footer
+}
+
+function xampp_security
+{
+# perform security check
+    p_header
+    echo "Checking server security ..."
+    echo "                                                                                "
+    echo -n "Enter ROOT "
+    su -c "$SERVERPATH security;exit"
+    p_footer
+}
+
+function apache_start
+{
+# start Apache
+    p_header
+    echo "Starting Apache ..."
+    echo "                                                                                "
+    echo -n "Enter ROOT "
+    su -c "$SERVERPATH startapache;exit"
+    p_footer
+}
+
+function apache_stop
+{
+# stop Apache
+    p_header
+    echo "Stopping Apache ..."
+    echo "                                                                                "
+    echo -n "Enter ROOT "
+    su -c "$SERVERPATH stopapache;exit"
+    p_footer
+}
+
+function mysql_start
+{
+# start MySQL
+    p_header
+    echo "Starting MySQL ..."
+    echo "                                                                                "
+    echo -n "Enter ROOT "
+    su -c "$SERVERPATH startmysql;exit"
+    p_footer
+}
+
+function mysql_stop
+{
+# stop MySQL
+    p_header
+    echo "Stopping MySQL ..."
+    echo "                                                                                "
+    echo -n "Enter ROOT "
+    su -c "$SERVERPATH stopmysql;exit"
+    p_footer
+}
+
+function ftp_start
+{
+# start (and activate) ProFTPd
+    p_header
+    echo "Starting ProFTPd ..."
+    echo "(Note: ProFTPd will remain activated when you restart XAMPP)"
+    echo "                                                                                "
+    echo -n "Enter ROOT "
+    su -c "$SERVERPATH startftp;exit"
+    p_footer
+}
+
+function ftp_stop
+{
+# stop (and deactivate) ProFTPd
+    p_header
+    echo "Stopping ProFTPd ..."
+    echo "(Note: ProFTPd will remain deactivated when you restart XAMPP)"
+    echo "                                                                                "
+    echo -n "Enter ROOT "
+    su -c "$SERVERPATH stopftp;exit"
+    p_footer
+}
+
+function ssl_start
+{
+# start (and activate) SSL
+    p_header
+    echo "Starting SSL support for Apache ..."
+    echo "(Note: SSL will remain activated when you restart XAMPP)"
+    echo "                                                                                "
+    echo -n "Enter ROOT "
+    su -c "$SERVERPATH startssl;exit"
+    p_footer
+}
+
+function ssl_stop
+{
+# stop (and deactivate) SSL
+    p_header
+    echo "Stopping SSL support for Apache ..."
+    echo "(Note: SSL will remain deactivated when you restart XAMPP)"
+    echo "                                                                                "
+    echo -n "Enter ROOT "
+    su -c "$SERVERPATH startftp;exit"
+    p_footer
+}
+
+function php_check
+{
+# check php version
+    p_header
+    echo "Checking PHP version ..."
+    echo "                                                                                "
+    echo -n "Enter ROOT "
+    su -c "$SERVERPATH phpstatus;exit"
+    p_footer
+}
+
+function php_4
+{
+# select php4
+    p_header
+    echo "Switching to PHP 4 ..."
+    echo "                                                                                "
+    echo -n "Enter ROOT "
+    su -c "$SERVERPATH php4;exit"
+    p_footer
+}
+
+function php_5
+{
+# select php5
+    p_header
+    echo "Switching to PHP 5 ..."
+    echo "                                                                                "
+    echo -n "Enter ROOT "
+    su -c "$SERVERPATH php5;exit"
+    p_footer
+}
+
+function help_page
+{
+# help page
+    p_header
+    echo "                   FIRST RULE: Do not start $P_NAME as root!                    "
+    echo "             (you will be asked for your root password when needed)             "
+    echo "                                                                                "
+    echo "                                                                                "
+    echo " USAGE:                                                                         "
+    echo "  xcs [-option(short)]   example: xcs -h                                        "
+    echo " or                                                                             "
+    echo "  xcs [--option(long)]   example: xcs --help                                    "
+    echo "                                                                                "
+    echo " with no option, or with a non valid one, the menu is displayed                 "
+    echo "                                                                                "
+    echo " OPTIONS                                                                        "
+    echo "  -x | --start     start the server                                             "
+    echo "  -k | --stop      stop the server                                              "
+    echo "  -r | --restart   restart the server                                           "
+    echo "  -c | --check     check server status                                          "
+    echo "  -s | --security  check server security                                        "
+    echo "--------------------------------------------------------------------------------"
+    echo " help | page 1/2 | Press ENTER to continue                                      "
+    echo "--------------------------------------------------------------------------------"
+    read
+    clear
+    p_header
+    echo " OPTIONS (Continued)                                                            "
+    echo "  -1 | --apachex   Start only Apache                                            "
+    echo "  -2 | --apachek   Stop Apache                                                  "
+    echo "  -m | --mysqlx    Start only MySQL                                             "
+    echo "  -q | --mysqlk    Stop MySQL                                                   "
+    echo "  -f | --ftpx      Start and activte the ProFTPd server                         "
+    echo "  -g | --ftpk      Stop and deactivate the ProFTPd server                       "
+    echo "  -v | --sslx      Start and activate the Apache SSL support                    "
+    echo "  -w | --sslk      Stop and deactivate the Apache SSL support                   "
+    echo "  -p | --php       Check PHP version                                            "
+    echo "  -4 | --php4      Select PHP 4                                                 "
+    echo "  -5 | --php5      Select PHP 4                                                 "
+    echo "  -h | --help      Help                                                         "
+    echo "  -a | --about     About                                                        "
+    echo "                                                                                "
+    echo " If you have trouble using $P_NAME or have any questions about it               "
+    echo " don't hesitate to get in touch! (see the about page)                           "
+    echo "--------------------------------------------------------------------------------"
+    echo " help | page 2/2 | Press ENTER to continue                                      "
+    echo "--------------------------------------------------------------------------------"
+    read
+    clear
+}
+
+function about_page
+{
+# about page
+    p_header
+    echo "                                                                                "
+    echo "                                                                                "
+    echo " FILE NAME:             $P_FILE                                                 "
+    echo "                                                                                "
+    echo " PROGRAM NAME:          $P_NAME                                                 "
+    echo "                                                                                "
+    echo " PROGRAM VERSION:       $P_VER                                                  "
+    echo "                                                                                "
+    echo " PROGRAM DESCRIPTION:   $P_DESC                                                 "
+    echo "                                                                                "
+    echo " AUTHOR:                $P_AUTH_N                                               "
+    echo "                                                                                "
+    echo " CONTACT:               $P_AUTH_E                                               "
+    echo "                                                                                "
+    echo " WEBSITE:               $P_AUTH_W                                               "
+    echo "                                                                                "
+    echo "                                                                                "
+    echo "--------------------------------------------------------------------------------"
+    echo " about | page 1/2 | Press ENTER to continue                                     "
+    echo "--------------------------------------------------------------------------------"
+    read
+    clear
+    p_header
+    echo " DISCLAIMER:"
+    echo " $P_NAME is $P_COPY"
+    echo ""
+    echo " This program is free software; you can redistribute it and/or modify"
+    echo " it under the terms of the GNU General Public License as published by"
+    echo " the Free Software Foundation; version 2 of the License."
+    echo ""
+    echo " This program is distributed in the hope that it will be useful,"
+    echo " but WITHOUT ANY WARRANTY; without even the implied warranty of"
+    echo " MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the"
+    echo " GNU General Public  License for more details."
+    echo ""
+    echo " You should have received a copy of the GNU General Public License"
+    echo " along with this program from the site that you downloaded it"
+    echo " from; if not. write to the Free Software Foundation, Inc., 59 Temple"
+    echo " Place, Suite 330, Boston, MA 02111-1307 USA"
+    echo "                                                                                "
+    echo "--------------------------------------------------------------------------------"
+    echo " about | page 2/2 | Press ENTER to continue                                     "
+    echo "--------------------------------------------------------------------------------"
+    read
+    clear
+}
+
+#
+# MENU
+#
+
+function main_menu
+{
+# main menu page 1
+    selection=
+    clear
+    until [ "$selection" = "0" ]; do
+        p_header_m
+        p_logo
+        echo "                                                                                "
+        echo "                                                                                "
+        echo "--------------------------------------------------------------------------------"
+        echo "  [x] start server         APACHE     ProFTPd               PHP                 "
+        echo "  [k] stop server          [1] start  [f] start (+ enable)  [p] check version   "
+        echo "  [r] restart server       [2] stop   [g] stop (+ disable)  [4] select php4     "
+        echo "  [c] server status                                         [5] select php5     "
+        echo "  [s] server security      MySQL      SSL                                       "
+        echo "                           [m] start  [v] start (+ enable)  [h] help            "
+        echo "  [0] exit                 [q] stop   [w] stop (+ disable)  [a] about           "
+        echo "--------------------------------------------------------------------------------"
+        echo -e "\a main menu | page 1/1 | make a selection and press ENTER                      "
+        echo "--------------------------------------------------------------------------------"
+        read selection
+        case $selection in
+            x ) xampp_start;;
+            k ) xampp_stop;;
+            r ) xampp_restart;;
+            c ) xampp_check;;
+            s ) xampp_security;;
+            1 ) apache_start;;
+            2 ) apache_stop;;
+            m ) mysql_start;;
+            q ) mysql_stop;;
+            f ) ftp_start;;
+            g ) ftp_stop;;
+            v ) ssl_start;;
+            w ) ssl_stop;;
+            p ) php_check;;
+            4 ) php_4;;
+            5 ) php_5;;
+            h ) help_page;;
+            a ) about_page;;
+            0 ) exit_ok;;
+            * ) invalid_selection
+        esac
+    done
+}
+
+# ================================================================================
+#############
+# EXECUTION #
+#############
+
+# first of all, check to see if you have XAMPP installed on your system
+check_xampp
+
+# make sure you are not logged in as root
+check_user
+
+# Menu or command line usage
+# If options are given, execute them. Else, display the menu.
+if [ "$1" != "" ]; then
+    while [ "$1" != "" ]; do
+        case $1 in
+            -x | --start )    xampp_start
+                            exit_ok
+                            ;;
+            -k | --stop )     xampp_stop
+                            exit_ok
+                            ;;
+            -r | --restart )  xampp_restart
+                            exit_ok
+                            ;;
+            -c | --check )    xampp_check
+                            exit_ok
+                            ;;
+            -s | --security ) xampp_security
+                            exit_ok
+                            ;;
+            -1 | --apachex )  apache_start
+                            exit_ok
+                            ;;
+            -2 | --apachek )  apache_stop
+                            exit_ok
+                            ;;
+            -m | --mysqlx )   mysql_start
+                            exit_ok
+                            ;;
+            -q | --mysqlk )   mysql_stop
+                            exit_ok
+                            ;;
+            -f | --ftpx )     ftp_start
+                            exit_ok
+                            ;;
+            -g | --ftpk )     ftp_stop
+                            exit_ok
+                            ;;
+            -v | --sslx )     ssl_start
+                            exit_ok
+                            ;;
+            -w | --sslk )     ssl_stop
+                            exit_ok
+                            ;;
+            -p | --php )      php_check
+                            exit_ok
+                            ;;
+            -4 | --php4 )     php_4
+                            exit_ok
+                            ;;
+            -5 | --php5 )     php_5
+                            exit_ok
+                            ;;
+            -h | --help )     help_page
+                            exit_ok
+                            ;;
+            -a | --about )    about_page
+                            exit_ok
+                            ;;
+            * )             main_menu
+        esac
+    done
+else
+    main_menu
+fi
